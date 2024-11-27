@@ -66,6 +66,8 @@ class CandyDispenserApp(customtkinter.CTk):
     def update_spring(self):
         compression = len(self._candy_stack) / self._max_capacity
         compressed_height = 70 + (compression * 300)
+        
+        # draw the spring based on the compression 
         self.dispenser_canvas.coords(self.spring_rect, 30, compressed_height, 170, 440)
         self.dispenser_canvas.coords(self.spring_top_line, 30, compressed_height, 170, compressed_height)
 
@@ -81,7 +83,7 @@ class CandyDispenserApp(customtkinter.CTk):
             self.display_msg(f"{new_candy} added")
 
             # Draw a rectangle for the new candy
-           # Calculate the Y position from the top for the new candy
+            # Calculate the Y position from the top for the new candy
             y_top = 70 + (self._capacity * 30)  # 70 is the initial offset from the top of the dispenser
             candy_rect = self.dispenser_canvas.create_rectangle(40, y_top, 160, y_top + 30, fill="orange", outline="black")
             self.candy_rectangles.append(candy_rect)
