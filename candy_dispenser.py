@@ -30,7 +30,7 @@ class CandyDispenserApp(customtkinter.CTk):
         self.bg_image_label = customtkinter.CTkLabel(self, image=self.bg_image, text="")
         self.bg_image_label.grid(row=0, column=0)
 
-        # a textbox that dispalys messages on pressing the buttons
+        # a textbox that displays messages on pressing the buttons
         self.message_text = customtkinter.CTkTextbox(self, width=250, height=200, corner_radius=10, bg_color="#df8ec0", fg_color="white", font=("Jokerman", 12))
         self.message_text.place(relx=0.98, rely=0.3, anchor="e")
 
@@ -51,14 +51,14 @@ class CandyDispenserApp(customtkinter.CTk):
         self.dispenser_canvas = customtkinter.CTkCanvas(self, width=200, height=450, bg="white")
         self.dispenser_canvas.place(relx=0.53, rely=0.53, anchor="center")
 
-        # the spring for the dispenser and a barrier on top of it
-        self.spring_rect = self.dispenser_canvas.create_rectangle(30, 70, 170, 440, fill="lightgrey", outline="lightgrey")
-        self.spring_top_line = self.dispenser_canvas.create_line(30, 70, 170, 70, fill="black", width=2)
+        self.spring_zigzag = self.dispenser_canvas.create_line(30, 70, 30, 440, fill="gray", width=2)
+
 
     # methods
 
     # display messages in the text box
     def display_msg(self, message):
+        self.message_text.delete("1.0", "end")
         self.message_text.insert("end", message + "\n")
         self.message_text.see("end")
 
@@ -66,10 +66,25 @@ class CandyDispenserApp(customtkinter.CTk):
     def update_spring(self):
         compression = len(self._candy_stack) / self._max_capacity
         compressed_height = 70 + (compression * 300)
-        
-        # draw the spring based on the compression 
-        self.dispenser_canvas.coords(self.spring_rect, 30, compressed_height, 170, 440)
-        self.dispenser_canvas.coords(self.spring_top_line, 30, compressed_height, 170, compressed_height)
+                     
+        # Generate zigzag coordinates for the spring
+        x_left = 30
+        x_right = 170
+        y_top = compressed_height
+        y_bottom = 440
+        num_coils = 10  # Number of coils in the spring
+        coil_spacing = (y_bottom - y_top) / (2 * num_coils)
+
+        # Create zigzag pattern
+        zigzag_coords = []
+        for i in range(num_coils * 2 + 1):
+            x = x_left if i % 2 == 0 else x_right
+            y = y_top + i * coil_spacing
+            zigzag_coords.append((x, y))
+
+        # Flatten the coordinate list for the canvas line
+        zigzag_coords_flat = [coord for point in zigzag_coords for coord in point]
+        self.dispenser_canvas.coords(self.spring_zigzag, *zigzag_coords_flat)
 
     # get a random candy type from the candy_types list and push it to the dispenser
     def push(self):
