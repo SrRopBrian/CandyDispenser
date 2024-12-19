@@ -31,8 +31,8 @@ class CandyDispenserApp(customtkinter.CTk):
         self.bg_image_label.grid(row=0, column=0)
 
         # a textbox that displays messages on pressing the buttons
-        self.message_text = customtkinter.CTkTextbox(self, width=250, height=200, corner_radius=10, bg_color="#df8ec0", fg_color="white", font=("Jokerman", 12))
-        self.message_text.place(relx=0.98, rely=0.3, anchor="e")
+        self.message_text = customtkinter.CTkTextbox(self, width=200, height=150, corner_radius=10, bg_color="#df8ec0", fg_color="white", font=("Jokerman", 14))
+        self.message_text.place(relx=0.96, rely=0.35, anchor="e")
 
         # buttons for the stack operations
         self.pushbtn = customtkinter.CTkButton(master=self, fg_color="#ffa500", bg_color='#df8ec0', text="Push candy", command=self.push)
@@ -52,9 +52,6 @@ class CandyDispenserApp(customtkinter.CTk):
         self.dispenser_canvas.place(relx=0.53, rely=0.53, anchor="center")
 
         self.spring_zigzag = self.dispenser_canvas.create_line(30, 70, 30, 440, fill="gray", width=2)
-
-
-    # methods
 
     # display messages in the text box
     def display_msg(self, message):
@@ -99,7 +96,7 @@ class CandyDispenserApp(customtkinter.CTk):
 
             # Draw a rectangle for the new candy
             # Calculate the Y position from the top for the new candy
-            y_top = 70 + (self._capacity * 30)  # 70 is the initial offset from the top of the dispenser
+            y_top = 70 + (self._capacity * 30)  # 70 - the initial offset from the top of the dispenser
             candy_rect = self.dispenser_canvas.create_rectangle(40, y_top, 160, y_top + 30, fill="orange", outline="black")
             self.candy_rectangles.append(candy_rect)
 
