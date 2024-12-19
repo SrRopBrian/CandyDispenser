@@ -51,6 +51,7 @@ class CandyDispenserApp(customtkinter.CTk):
         self.dispenser_canvas = customtkinter.CTkCanvas(self, width=200, height=450, bg="white")
         self.dispenser_canvas.place(relx=0.53, rely=0.53, anchor="center")
 
+        #spring itself
         self.spring_zigzag = self.dispenser_canvas.create_line(30, 70, 30, 440, fill="gray", width=2)
 
     # display messages in the text box
@@ -101,6 +102,7 @@ class CandyDispenserApp(customtkinter.CTk):
             self._candy_stack.append(new_candy)
             self.display_msg(f"{new_candy} added")
 
+            #Generate random hex values for candy color
             random_color = "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
             # Calculate the Y position based on the spring's compressed height
