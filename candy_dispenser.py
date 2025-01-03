@@ -22,6 +22,12 @@ class CandyDispenserApp(customtkinter.CTk):
         self._max_capacity = max_capacity
         self._candy_stack: List[str] = []
         self.candy_rectangles = [] 
+        self.candy_texts = []  # List to hold text IDs
+
+        self.candy_types = ["Juicy Fruit", "Twix", "Snickers", "Kit Kat", "Gummy Bears", "Toffee crisp", 
+                   "Bubble yum", "Trident", "Hubba Bubba", "Haribo"]
+        self.available_candies = self.candy_types[:]
+        random.shuffle(self.available_candies)
 
         # set background image
         current_path = os.path.dirname(os.path.realpath(__file__))
@@ -31,7 +37,7 @@ class CandyDispenserApp(customtkinter.CTk):
         self.bg_image_label.grid(row=0, column=0)
 
         # a textbox that displays messages on pressing the buttons
-        self.message_text = customtkinter.CTkTextbox(self, width=200, height=150, corner_radius=10, bg_color="#df8ec0", fg_color="white", font=("Jokerman", 16))
+        self.message_text = customtkinter.CTkTextbox(self, width=225, height=130, corner_radius=10, bg_color="#df8ec0", fg_color="white", font=("Jokerman", 16))
         self.message_text.place(relx=0.96, rely=0.35, anchor="e")
 
         # buttons for the stack operations
@@ -85,20 +91,28 @@ class CandyDispenserApp(customtkinter.CTk):
         self.dispenser_canvas.coords(self.spring_zigzag, *zigzag_coords_flat)
 
         # Reposition all candy rectangles
-        for i, rect in enumerate(self.candy_rectangles):
+        for i, (rect,text) in enumerate(zip(self.candy_rectangles, self.candy_texts)):
             y_top = compressed_height - ((i + 1) * 30)
             y_bottom = y_top + 30
             self.dispenser_canvas.coords(rect, 40, y_top, 160, y_bottom)
 
+            # Update the text position to be centered on the rectangle
+            self.dispenser_canvas.coords(text, 100, (y_top + y_bottom) / 2)
+
 
     # get a random candy type from the candy_types list and push it to the dispenser
     def push(self):
-        candy_types = ["Juicy Fruit", "Twix", "Snickers", "Kit Kat", "Gummy Bears", "Toffee crisp", 
-                   "Bubble yum", "Trident", "Hubba Bubba", "Haribo"]
+        
         if (self._capacity == self._max_capacity):
             self.display_msg("Candy dispenser full.")
         else:
-            new_candy = random.choice(candy_types)
+            if not self.available_candies:
+                # Reshuffle the candy list when all candy types have been used
+                self.available_candies = self.candy_types[:]
+                random.shuffle(self.available_candies)
+        
+            # Get a candy from the available list
+            new_candy = self.available_candies.pop()
             self._candy_stack.append(new_candy)
             self.display_msg(f"{new_candy} added")
 
@@ -116,6 +130,10 @@ class CandyDispenserApp(customtkinter.CTk):
             candy_rect = self.dispenser_canvas.create_rectangle(40, y_top, 160, y_bottom, fill=random_color, outline="black")
             self.candy_rectangles.append(candy_rect)
 
+            # Add text to the candy
+            candy_text = self.dispenser_canvas.create_text(100, (y_top + y_bottom) / 2, text=new_candy, font=("Arial", 12), fill="black")
+            self.candy_texts.append(candy_text)
+
             self._capacity += 1
             self.update_spring()
 
@@ -130,6 +148,9 @@ class CandyDispenserApp(customtkinter.CTk):
 
         top_candy_rect = self.candy_rectangles.pop()  # Get the latest rectangle and remove it
         self.dispenser_canvas.delete(top_candy_rect)   # Delete the rectangle from the canvas
+
+        top_candy_text = self.candy_texts.pop()
+        self.dispenser_canvas.delete(top_candy_text)
 
         self._capacity -= 1
         self.update_spring()
